@@ -27,10 +27,10 @@ func NewContractRepository(db *sql.DB) *ContractRepository {
 func (r *ContractRepository) Upsert(companyID int, plan, signedAt string) (int64, error) {
 	result, err := r.db.Exec(`
 		INSERT INTO contracts (company_id, plan, signed_at)
-		VALUES (?, ?, ?)
+		VALUES (?, ?, ?) AS new
 		ON DUPLICATE KEY UPDATE
-		  plan      = VALUES(plan),
-		  signed_at = VALUES(signed_at)
+		  plan      = new.plan,
+		  signed_at = new.signed_at
 	`, companyID, plan, signedAt)
 	if err != nil {
 		return 0, err
